@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, pluck, tap } from 'rxjs/operators';
@@ -11,8 +11,10 @@ export class AcoesService {
 
   constructor(private httpClient: HttpClient) { }
 
-  getAcoes(): Observable<Array<Acao>> {
-    return this.httpClient.get<AcoesAPI>('http://localhost:3000/acoes')
+  getAcoes(input?: string): Observable<Array<Acao>> {
+    return this.httpClient.get<AcoesAPI>(
+      'http://localhost:3000/acoes',
+      {params: input ? new HttpParams().append('valor', input) : undefined})
       .pipe(
         tap(res => console.log(res)),
         pluck('payload'),
