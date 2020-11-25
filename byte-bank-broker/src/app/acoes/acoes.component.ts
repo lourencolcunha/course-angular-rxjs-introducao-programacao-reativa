@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import {Acao, Acoes} from './modelos/acoes';
 import {AcoesService} from './acoes.service';
 import { merge, Subscription } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { debounce, debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-acoes',
@@ -14,6 +14,10 @@ export class AcoesComponent {
   acoesInput = new FormControl();
 
   filtroAcoes$ = this.acoesInput.valueChanges.pipe(
+    filter((input) => input.length >= 3 || !input.length ),
+    tap(console.log),
+    debounceTime(300),
+    distinctUntilChanged(),
     switchMap((input) => this.acoesService.getAcoes(input))
   );
   todasAcoes$ = this.acoesService.getAcoes();
